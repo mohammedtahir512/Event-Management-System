@@ -39,7 +39,6 @@ public class EventService {
         int end = Math.min(start + pageSize, events.size());
 
         if (start >= end) {
-
             return Collections.emptyList();
         }
 
@@ -50,19 +49,16 @@ public class EventService {
                 .collect(Collectors.toList());
     }
 
-
     private EventDto convertToEventDto(Event event, double latitude, double longitude) {
         EventDto eventDto = new EventDto();
         eventDto.setEvent_name(event.getEvent_name());
         eventDto.setCity_name(event.getCity_name());
         eventDto.setDate(event.getDate());
 
-        // Fetch weather information for the event's city and date
         String weatherInfo = weatherService.getFormattedWeatherByCityAndDate(event.getCity_name(), event.getDate());
         eventDto.setWeather(weatherInfo);
 
-        // Calculate distance between user's location and event's location
-        double distance = distanceCalculatorService.calculateDistance(0.0, 0.0, event.getLatitude(), event.getLongitude());
+        double distance = distanceCalculatorService.calculateDistance(latitude, longitude, event.getLatitude(), event.getLongitude());
         eventDto.setDistance_km(distance);
 
         return eventDto;
@@ -76,4 +72,5 @@ public class EventService {
 
 
 
-    }
+
+}

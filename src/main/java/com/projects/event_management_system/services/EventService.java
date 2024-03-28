@@ -28,25 +28,19 @@ public class EventService {
         eventRepository.save(event);
     }
 
-    public List<EventDto> findEvents(double latitude, double longitude, Date date, int page, int pageSize) {
+    public List<EventDto> findEvents(double latitude, double longitude, Date date) {
         Date startDate = date;
         Date endDate = new Date(date.getTime() + 14 * 24 * 60 * 60 * 1000); // Add 14 days to the specified date
 
         List<Event> events = eventRepository.findEventsWithinDateRangeSortedByDateAndDistance(startDate, endDate, latitude, longitude);
 
-        // Paginate the events
-        int start = (page - 1) * pageSize;
-        int end = Math.min(start + pageSize, events.size());
-
-        if (start >= end) {
-            return Collections.emptyList();
+        List<EventDto> eventDtos = new ArrayList<>();
+        for (Event event : events) {
+            EventDto eventDto = convertToEventDto(event, latitude, longitude);
+            eventDtos.add(eventDto);
         }
 
-        List<Event> paginatedEvents = events.subList(start, end);
-
-        return paginatedEvents.stream()
-                .map(event -> convertToEventDto(event, latitude, longitude))
-                .collect(Collectors.toList());
+        return eventDtos;
     }
 
     private EventDto convertToEventDto(Event event, double latitude, double longitude) {
@@ -55,7 +49,7 @@ public class EventService {
         eventDto.setCity_name(event.getCity_name());
         eventDto.setDate(event.getDate());
 
-        String weatherInfo = weatherService.getFormattedWeatherByCityAndDate(event.getCity_name(), event.getDate());
+        String weatherInfo = weatherService.getFormattedWeather(event.getLatitude(), event.getLongitude());
         eventDto.setWeather(weatherInfo);
 
         double distance = distanceCalculatorService.calculateDistance(latitude, longitude, event.getLatitude(), event.getLongitude());

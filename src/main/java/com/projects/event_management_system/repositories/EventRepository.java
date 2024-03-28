@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 
-    public interface EventRepository extends JpaRepository<Event, Long> {
+public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e FROM Event e WHERE e.date BETWEEN :startDate AND :endDate " +
             "ORDER BY e.date, FUNCTION('calculate_distance', :latitude, :longitude, e.latitude, e.longitude)")
     List<Event> findEventsWithinDateRangeSortedByDateAndDistance(
@@ -20,7 +20,8 @@ import java.util.List;
             @Param("latitude") double latitude,
             @Param("longitude") double longitude
     );
-    }
+}
+
 
 
 

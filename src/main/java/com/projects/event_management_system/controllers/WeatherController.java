@@ -22,7 +22,7 @@ public class WeatherController {
         this.weatherService = weatherService;
     }
 
-    @GetMapping("/formatted")
+    @GetMapping("/bycityAndDate")
     public String getFormattedWeatherByCityAndDate(@RequestParam String cityName,
                                                    @RequestParam String dateString) {
         Date date;
@@ -40,6 +40,23 @@ public class WeatherController {
         }
     }
 
+    @GetMapping("/byCoordinate")
+    public String getFormattedWeather(@RequestParam double latitude,
+                                                   @RequestParam double longitude,@RequestParam String dateString) {
+        Date date;
+        try {
+            date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "Invalid date format";
+        }
+
+        try {
+            return weatherService.getFormattedWeather(latitude,longitude);
+        } catch (HttpClientErrorException e) {
+            return "City not found";
+        }
+    }
     @ExceptionHandler(HttpClientErrorException.class)
     public ResponseEntity<String> handleHttpClientErrorException(HttpClientErrorException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("City not found");

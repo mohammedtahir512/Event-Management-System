@@ -24,8 +24,8 @@ import java.util.List;
     
     
         @GetMapping("/find")
-        public ResponseEntity<List<EventDto>> findEvents(@RequestParam double latitude, @RequestParam double longitude, @RequestParam(name = "searchDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize) {
-            List<EventDto> events = eventService.findEvents(latitude, longitude, date, page, pageSize);
+        public ResponseEntity<List<EventDto>> findEvents(@RequestParam double latitude, @RequestParam double longitude, @RequestParam(name = "searchDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date){
+            List<EventDto> events = eventService.findEvents(latitude, longitude, date);
             return ResponseEntity.ok(events);
         }
     
